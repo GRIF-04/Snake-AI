@@ -1,5 +1,5 @@
 import numpy as np
-from random import randint
+from random import random
 
 
 def sigmusoide(X):#fonction d'activation
@@ -54,7 +54,7 @@ def reseau_de_neurones(n_ent,n_cach1,n_cach2,n_sort):
     #print('WXent=')
     #print(WXent)
 
-    Wentcach1=np.random.rand(n_cach1,n_ent) 
+    Wentcach1=np.random.rand(n_cach1,n_X) 
     #print('Wentcach1')
     #print(Wentcach1)
 
@@ -107,7 +107,6 @@ def jeu_du_reseau(X,reseau):
 
     somme_sort_deja_init = prod(Wcach2sort_deja_init,sigm_cach2_deja_init) + b_sort_deja_init
     sigm_sort_deja_init = sigmusoide(somme_sort_deja_init)
-    print(sigm_sort_deja_init)
     #print('somme_sort_deja_init=')
     #print(somme_sort_deja_init)
     return direcaupoidsmax(sigm_sort_deja_init)
@@ -137,15 +136,28 @@ def jeu_du_reseau(X,reseau):
 
 
 
+def run_res(X, para):
+
+    
+    W1=para['Wentcach1']
+    W2=para['Wcach1cach2']
+    W3=para['Wcach2sort']
+    
+    b1=para['b_cach1']
+    b2=para['b_cach2']
+    b3=para['b_sort']
 
 
-
-
-
-
-
-
-
+    Z1 = np.dot(W1, X) + b1
+    A1 = sigmusoide(Z1)
+    print(Z1, A1)
+    Z2 = np.dot(W2, A1) + b2
+    A2 = sigmusoide(Z2)
+    print(Z2, A2)
+    Z3 = np.dot(W3, A2) + b3
+    A3 = sigmusoide(Z3)
+    print(Z3, A3)
+    return direcaupoidsmax(A3)
 
 
 
