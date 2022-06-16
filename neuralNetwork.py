@@ -2,7 +2,7 @@ import numpy as np
 from random import random
 
 
-def sigmusoide(X):#fonction d'activation
+def sigmoid(X):#fonction d'activation
     return 1/(1+np.exp(-X))
 
 
@@ -98,15 +98,15 @@ def jeu_du_reseau(X,reseau):
     somme_cach1_deja_init = prod(Wentcach1_deja_init,X) + b_cach1_deja_init
     #print('somme_cach1_deja_int=')
     #print(somme_cach1_deja_init)
-    sigm_cach1_deja_init = sigmusoide(somme_cach1_deja_init)
+    sigm_cach1_deja_init = sigmoid(somme_cach1_deja_init)
     #print('sigm_cach1_deja_init=')
     #print(sigm_cach1_deja_init)
 
     somme_cach2_deja_init = prod(Wcach1cach2_deja_init,sigm_cach1_deja_init) + b_cach2_deja_init
-    sigm_cach2_deja_init  =sigmusoide(somme_cach2_deja_init)
+    sigm_cach2_deja_init  =sigmoid(somme_cach2_deja_init)
 
     somme_sort_deja_init = prod(Wcach2sort_deja_init,sigm_cach2_deja_init) + b_sort_deja_init
-    sigm_sort_deja_init = sigmusoide(somme_sort_deja_init)
+    sigm_sort_deja_init = sigmoid(somme_sort_deja_init)
     #print('somme_sort_deja_init=')
     #print(somme_sort_deja_init)
     return direcaupoidsmax(sigm_sort_deja_init)
@@ -133,7 +133,11 @@ def jeu_du_reseau(X,reseau):
 #print(creation_de_reseaux(100))
 
 
-
+def relu(X):
+    X_t = []
+    for e in X:
+        X_t.append(max(0.0, e))
+    return np.array(X_t)
 
 
 def run_res(X, para):
@@ -147,17 +151,17 @@ def run_res(X, para):
     b2=para['b_cach2']
     b3=para['b_sort']
 
-    X_t = sigmusoide(np.array(X))
+    X_t = sigmoid(np.array(X))
 
-    Z1 = np.dot(W1, X_t) + b1
-    A1 = sigmusoide(Z1)
+    Z1 = np.dot(W1, X) + b1
+    A1 = relu(Z1)
 
     Z2 = np.dot(W2, A1) + b2
-    A2 = sigmusoide(Z2)
+    A2 = relu(Z2)
 
     Z3 = np.dot(W3, A2) + b3
-    A3 = sigmusoide(Z3)
-    
+    A3 = relu(Z3)
+    print(A3)
     return direcaupoidsmax(A3)
 
 
@@ -170,12 +174,11 @@ def res(dim):
     return para
 
 def run_res_g(X, res):
-    Z = np.dot(res["W1"], sigmusoide(np.array(X))) + res["b1"]
-    A = sigmusoide(Z)
+    Z = np.dot(res["W1"], np.array(X)) + res["b1"]
     for i in range(2, len(res)//2 + 1):
-        Z = np.dot(res["W" + str(i)], A) + res["b" + str(i)]
-        A = sigmusoide(Z)
-    return direcaupoidsmax(A)
+        Z = np.dot(res["W" + str(i)], sigmoid(Z)) + res["b" + str(i)]
+    return direcaupoidsmax(sigmoid(Z))
+
 
 def creation_de_reseaux(n, dim):
 #créé une premiere generation de n IA

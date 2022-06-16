@@ -55,7 +55,7 @@ class Game():
     
 
     def perf(self):
-        return 100 * self.score - self.snake.fitness
+        return 100 * self.score
     
     def blocked(self):
         dir = self.snkdir()
@@ -113,16 +113,20 @@ class Game():
 
         
         if new_pos == self.pomme.tu:
+
             if self.snake.fitness + 150 > 600:
                 self.snake.fitness = 600
             else:
                 self.snake.fitness += 150
+            
             self.score += 1
             self.pomme.tu = ()
+
             while self.pomme.tu == ():
                 self.pomme.renait()
                 if self.pomme.tu in self.snake.body[1:]:
                     self.pomme = ()
+            
             self.snake.maj(True, new_pos)
         else:
             self.snake.maj(False, new_pos)

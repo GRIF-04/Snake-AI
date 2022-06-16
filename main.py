@@ -1,3 +1,4 @@
+from neuralNetwork import res
 from genetic import *
 from snk import Snake
 from pomme import Pomme
@@ -13,7 +14,8 @@ def run(reseau):
     val = True
     tab = []
     while val:
-        d = run_res_g([[game.snkdir()], [game.distpo()[0]], [game.distpo()[1]], [game.blocked()[0]], [game.blocked()[1]], [game.blocked()[2]], [len(game.snake.body)]], reseau)
+        d = run_res_g([[game.snkdir() / 3], [(game.distpo()[0] +60) / 120], [(game.distpo()[1]+ 20) / 40], [game.blocked()[0]], [game.blocked()[1]], [game.blocked()[2]]], reseau)
+        #print(d)
         tab.append(d)
         dir = list_dir[(game.snkdir() + d) % 4]
         a = game.loop(dir)
@@ -25,7 +27,7 @@ def run(reseau):
 
 
 
-
+#print(run(res((6, 8, 4, 3))))
 
 
 def run_gen(pop):
@@ -36,17 +38,19 @@ def run_gen(pop):
 
 
 def grif(nb_gen):
-    pop = creation_de_reseaux(nb_by_gen, (7, 8, 8, 8, 3))
+    pop = creation_de_reseaux(nb_by_gen, (6, 8, 8, 3))
     perf_t = []
     with open("data.txt", "w") as f:
         for i in tqdm(range(nb_gen)):
             perf = run_gen(pop)
-            perf_t.extend(perf)
+            perf_t.append(perf)
             pop = elitism(pop, perf)
-            #print(elites)
             children = crossover(pop)
             pop.extend(children + mutation(children))
+        perf = run_gen(pop)
+        f.write(str(elitism(pop, perf)[0]))
     f.close()
     return pop, perf_t
 
-print(grif(500)[1])
+
+print(grif(50)[1])
