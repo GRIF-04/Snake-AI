@@ -49,7 +49,7 @@ def reseau_de_neurones(n_ent,n_cach1,n_cach2,n_sort):
 
 #initialisation des poids et biais
 
-    n_X=6 #nombre de parametres
+    n_X=n_ent #nombre de parametres
     WXent=np.random.rand(n_ent,n_X) #W correspond au poids
     #print('WXent=')
     #print(WXent)
@@ -72,11 +72,11 @@ def reseau_de_neurones(n_ent,n_cach1,n_cach2,n_sort):
     parametres={'WXent': WXent,'Wentcach1': Wentcach1,'Wcach1cach2': Wcach1cach2,'Wcach2sort': Wcach2sort,'b_ent': b_ent,'b_cach1': b_cach1,'b_cach2': b_cach2,'b_sort': b_sort}
     return parametres
 
-def creation_de_reseaux(n):
+def creation_de_reseaux(n, e):
 #créé une premiere generation de n IA
     prem_gene=[]
     for i in range(n):
-        prem_gene.append(reseau_de_neurones(6,8,8,3))
+        prem_gene.append(reseau_de_neurones(e,8,8,3))
     return(prem_gene)
 
 
@@ -147,17 +147,42 @@ def run_res(X, para):
     b2=para['b_cach2']
     b3=para['b_sort']
 
+    X_t = sigmusoide(np.array(X))
 
-    Z1 = np.dot(W1, X) + b1
+    Z1 = np.dot(W1, X_t) + b1
     A1 = sigmusoide(Z1)
-    print(Z1, A1)
+
     Z2 = np.dot(W2, A1) + b2
     A2 = sigmusoide(Z2)
-    print(Z2, A2)
+
     Z3 = np.dot(W3, A2) + b3
     A3 = sigmusoide(Z3)
-    print(Z3, A3)
+    
     return direcaupoidsmax(A3)
+
+
+def res(dim):
+    n = len(dim)
+    para = {}
+    for c in range(1, n):
+        para['W' + str(c)] = np.random.rand(dim[c], dim[c-1])
+        para['b' + str(c)] = np.random.rand(dim[c], 1)
+    return para
+
+def run_res_g(X, res):
+    Z = np.dot(res["W1"], sigmusoide(np.array(X))) + res["b1"]
+    A = sigmusoide(Z)
+    for i in range(2, len(res)//2 + 1):
+        Z = np.dot(res["W" + str(i)], A) + res["b" + str(i)]
+        A = sigmusoide(Z)
+    return direcaupoidsmax(A)
+
+def creation_de_reseaux(n, dim):
+#créé une premiere generation de n IA
+    prem_gene=[]
+    for i in range(n):
+        prem_gene.append(res(dim))
+    return(prem_gene)
 
 
 
